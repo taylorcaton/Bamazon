@@ -12,34 +12,34 @@ CREATE TABLE products(
   PRIMARY KEY (id)
 );
 
-INSERT INTO items (product_name, department_name, price, stock_quanity)
+INSERT INTO products (product_name, department_name, price, stock_quanity)
 VALUES ("Dress" ,"Clothing", 39.99, 5);
 
-INSERT INTO items (product_name, department_name, price, stock_quanity)
+INSERT INTO products (product_name, department_name, price, stock_quanity)
 VALUES ("Leggings","Clothing",9.99,5);
 
-INSERT INTO items (product_name, department_name, price, stock_quanity)
+INSERT INTO products (product_name, department_name, price, stock_quanity)
 VALUES ("Seabreeze Candle (With a lil bit of coconut)","Home Accents",17.99,3);
 
-INSERT INTO items (product_name, department_name, price, stock_quanity)
+INSERT INTO products (product_name, department_name, price, stock_quanity)
 VALUES ("Wooden Duck Door Stop","Home Accents",24.99,3);
 
-INSERT INTO items (product_name, department_name, price, stock_quanity)
+INSERT INTO products (product_name, department_name, price, stock_quanity)
 VALUES ("Nintendo Switch","Electronics", 299.99, 2);
 
-INSERT INTO items (product_name, department_name, price, stock_quanity)
+INSERT INTO products (product_name, department_name, price, stock_quanity)
 VALUES ("Super Nintendo Classic","Electronics",79.99,3);
 
-INSERT INTO items (product_name, department_name, price, stock_quanity)
+INSERT INTO products (product_name, department_name, price, stock_quanity)
 VALUES ("Science Diet Dog Food for Dachshunds","Pet Supplies", 17.99, 10);
 
-INSERT INTO items (product_name, department_name, price, stock_quanity)
+INSERT INTO products (product_name, department_name, price, stock_quanity)
 VALUES ("Bully Sticks","Pet Supplies", 19.99, 5);
 
-INSERT INTO items (product_name, department_name, price, stock_quanity)
-VALUES ("","Furniture");
+INSERT INTO products (product_name, department_name, price, stock_quanity)
+VALUES ("Oriental Rug","Furniture", 865.99, 4);
 
-INSERT INTO items (product_name, department_name, price, stock_quanity)
-VALUES ("Furniture");
+INSERT INTO products (product_name, department_name, price, stock_quanity)
+VALUES ("Leather Recliner","Furniture",599.99,8);
 
-SELECT * from items;
+SELECT * from products;
