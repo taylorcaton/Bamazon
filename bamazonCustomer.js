@@ -37,7 +37,7 @@ function start(){
         });
 
         res.forEach(function(item) {
-            table.push([item.id, item.product_name, item.department_name, item.price, item.stock_quanity]);
+            table.push([item.id, item.product_name, item.department_name, "$"+item.price.toFixed(2), item.stock_quanity]);
             idList.push(item.id);
         });
 
@@ -85,11 +85,8 @@ function productAvailable(myID, myQuanity){
     },
     function(err, res) {
         if(res[0].stock_quanity > 0 && res[0].stock_quanity >= myQuanity) {
-            console.log(`${res[0].product_name} is available`);
-            // console.log(`   $${res[0].price}`)
-            // console.log(`x\t${myQuanity}`)
-            // console.log(`---------`)
-            // console.log(`   $${res[0].price * myQuanity}`)
+            console.log(`${res[0].product_name} is available\n`);
+            
             printReceipt(res[0].product_name, res[0].price, myQuanity);
             updateDatabase(myID, myQuanity, res[0].stock_quanity);
             
@@ -148,6 +145,8 @@ function updateDatabase(myID, myQuanity, currentQuanity){
 
 
 function printReceipt(item, price, quanity){
+    
+    var displayPrice = price * 100;
     const output = receipt.create([
         { type: 'text', value: [
             'BAMAZON',
@@ -157,13 +156,13 @@ function printReceipt(item, price, quanity){
         ], align: 'center' },
         { type: 'empty' },
         { type: 'table', lines: [
-            { item: item, qty: quanity, cost: price },
+            { item: item, qty: quanity, cost: displayPrice },
         ] },
         { type: 'empty' },
         { type: 'properties', lines: [
-            { name: 'CLT Tax (7.25%)', value: '$'+(price * .0725).toFixed(2) },
-            { name: 'Total amount (excl. CLT Tax)', value: '$'+(price).toFixed(2) },
-            { name: 'Total amount (incl. CLT Tax)', value: '$'+(price * 1.0725).toFixed(2) }
+            { name: 'CLT Tax (7.25%)', value: '$'+((price * quanity) * .0725).toFixed(2) },
+            { name: 'Total amount (excl. CLT Tax)', value: '$'+(price * quanity).toFixed(2) },
+            { name: 'Total amount (incl. CLT Tax)', value: '$'+((price * quanity) * 1.0725).toFixed(2) }
         ] },
         { type: 'empty' },
         { type: 'text', value: 'Come back soon!', align: 'center', padding: 5 }
