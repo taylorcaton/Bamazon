@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/taylorcaton/Bamazon#readme",
   "dependencies": {
+    "clear": "0.0.1",
     "cli-table": "^0.3.1",
     "cli-table-redemption": "^1.0.1",
     "inquirer": "^3.2.1",

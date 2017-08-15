@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require('cli-table-redemption');
+var clear = require('clear');
 var idList = [];
 
 const receipt = require('receipt');
@@ -28,7 +29,7 @@ connection.connect(function(err) {
   });
 
 function start(){
-
+    clear();
     connection.query("SELECT * FROM products", function(err, res) {
         
         // Insantiate and Build the Table 
@@ -88,7 +89,7 @@ function productAvailable(myID, myQuanity){
             console.log(`${res[0].product_name} is available\n`);
             
             printReceipt(res[0].product_name, res[0].price, myQuanity);
-            updateDatabase(myID, myQuanity, res[0].stock_quanity);
+            updateDatabase(myID, myQuanity, res[0].stock_quanity, res[0].price, res[0].product_sales);
             
         }else{
             console.log(`Not enough stock!: ${res[0].stock_quanity} ${res[0].product_name}`);
@@ -112,12 +113,13 @@ function productAvailable(myID, myQuanity){
     });
 }//end of productAvailable()
 
-function updateDatabase(myID, myQuanity, currentQuanity){
+function updateDatabase(myID, myQuanity, currentQuanity, price, currentSales){
     var query = connection.query(
         "UPDATE products SET ? WHERE ?",
         [
           {
-            stock_quanity: (currentQuanity - myQuanity)
+            stock_quanity: (currentQuanity - myQuanity),
+            product_sales: currentSales+(myQuanity * price)
           },
           {
             id: myID

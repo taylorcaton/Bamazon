@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require('cli-table-redemption');
+var clear = require('clear');
 var itemList = [];
 
 // create the connection information for the sql database
@@ -17,11 +18,11 @@ var connection = mysql.createConnection({
   });
   
   
-  connection.connect(function(err) {
-      if (err) throw err;
-      start();
-    });
-
+connection.connect(function(err) {
+    if (err) throw err;
+    start();
+});
+clear();
 function start(){
     connection.query("SELECT * FROM products", function(err, res) {
         
@@ -146,6 +147,7 @@ function addToInventory(){
                 }
             ]).then(function(ans){
                 if(ans.choice === "Yes"){
+                    clear();
                     start();
                 }else{
                     return;
@@ -159,87 +161,101 @@ function addToInventory(){
 }//end of addToInventory()
 
 function addNewProduct(){
-    inquirer.prompt([
-        {
-            name: 'dept',
-            message: 'Which DEPARTMENT will we sell this in?',
-            type: "list",
-            choices: function(){
-                var tempList = [];
-                itemList.forEach(function(ele){
-                    if(tempList.indexOf(ele.department) === -1){
-                        tempList.push(ele.department);
+
+    connection.query("SELECT * FROM departments", function(err, res) {
+        
+        //Build a list of updated departments to choose from
+
+        //departments we know
+        var tempList = [];
+        itemList.forEach(function(ele){
+            if(tempList.indexOf(ele.department) === -1){
+                tempList.push(ele.department);
+            }
+        });
+        
+        //add depts that don't have items (from the departments table)
+        res.forEach(function(element){
+            if(tempList.indexOf(element.department_name) === -1){
+                tempList.push(element.department_name)
+            }
+        });
+
+        inquirer.prompt([
+            {
+                name: 'dept',
+                message: 'Which DEPARTMENT will we sell this in?',
+                type: "list",
+                choices: tempList
+            },
+            {
+                name: 'product',
+                message: "What is the NAME of the new product?",
+            },
+            {
+                name: 'price',
+                message: 'How much will it COST?',
+                validate: function(input){
+                    if(isNaN(input)){
+                        console.log("Input is not a number")
+                        return false //input is not a number
+                    }else if(input <= 0){
+                        console.log("Input must be > 0");
+                        return false;
+                    }else{
+                        return true;
+                    }
+                }
+            },
+            {
+                name: 'quanity',
+                message: 'How many do we have in our inventory?',
+                validate: function(input){
+                    if(isNaN(input)){
+                        console.log("Input is not a number")
+                        return false //input is not a number
+                    }else if(input <= 0){
+                        console.log("Input must be > 0");
+                        return false;
+                    }else{
+                        return true;
+                    }
+                }
+            }
+        ]).then(function(ans){
+            
+            var price = parseFloat(ans.price).toFixed(2);
+
+            var post = {
+                product_name: ans.product,
+                department_name: ans.dept,
+                price: price,
+                stock_quanity: parseInt(ans.quanity)
+            }
+            connection.query(
+                "INSERT INTO products SET ?",
+                post,
+                function(err, res) {
+                inquirer.prompt([
+                    {
+                        name: "choice",
+                        message: "Start Over?",
+                        type: "list",
+                        choices: ["Yes", "No (Exit)"]
+                    }
+                ]).then(function(ans){
+                    if(ans.choice === "Yes"){
+                        clear();
+                        start();
+                    }else{
+                        return;
                     }
                 })
-                return tempList;
-            }
-        },
-        {
-            name: 'product',
-            message: "What is the NAME of the new product?",
-        },
-        {
-            name: 'price',
-            message: 'How much will it COST?',
-            validate: function(input){
-                if(isNaN(input)){
-                    console.log("Input is not a number")
-                     return false //input is not a number
-                }else if(input <= 0){
-                    console.log("Input must be > 0");
-                    return false;
-                }else{
-                    return true;
+                if(err) console.log(err);
                 }
-            }
-        },
-        {
-            name: 'quanity',
-            message: 'How many do we have in our inventory?',
-            validate: function(input){
-                if(isNaN(input)){
-                    console.log("Input is not a number")
-                     return false //input is not a number
-                }else if(input <= 0){
-                    console.log("Input must be > 0");
-                    return false;
-                }else{
-                    return true;
-                }
-            }
-        }
-    ]).then(function(ans){
-        
-        var price = parseFloat(ans.price).toFixed(2);
+            )//end of connection query    
 
-        var post = {
-            product_name: ans.product,
-            department_name: ans.dept,
-            price: price,
-            stock_quanity: parseInt(ans.quanity)
-        }
-        connection.query(
-            "INSERT INTO products SET ?",
-            post,
-            function(err, res) {
-              inquirer.prompt([
-                {
-                    name: "choice",
-                    message: "Start Over?",
-                    type: "list",
-                    choices: ["Yes", "No (Exit)"]
-                }
-            ]).then(function(ans){
-                if(ans.choice === "Yes"){
-                    start();
-                }else{
-                    return;
-                }
-            })
-            if(err) console.log(err);
-            }
-          )//end of connection query    
-
+        })
     })
 }//end of addNewProduct()
 
