@@ -35,7 +35,8 @@ GROUP BY departments.department_id';
         
         // Insantiate and Build the Table 
         var table = new Table({
-            head: ['Department ID', 'Department Name', 'Over head costs', 'Product Sales', 'Total Profit']
+            head: ['Department ID', 'Department Name', 'Over head costs', 'Product Sales', 'Total Profit'],
+            style: {head: ['green'], border: ['grey']}
         });
         res.forEach(function(item) {
             var prodSales;

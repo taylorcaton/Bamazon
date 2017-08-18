@@ -34,7 +34,8 @@ function start(){
         
         // Insantiate and Build the Table 
         var table = new Table({
-            head: ['Prod#', 'Product Name', 'Department', 'Price', 'qty']
+            head: ['Prod#', 'Product Name', 'Department', 'Price', 'qty'],
+            style: {head: ['green'], border: ['grey']}
         });
 
         res.forEach(function(item) {
